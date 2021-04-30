@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stream_app_poc/core/event_bus.dart';
+import 'package:stream_app_poc/counter_bloc.dart';
 
 import 'counter_page.dart';
 
@@ -9,7 +10,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,7 +25,10 @@ class MyApp extends StatelessWidget {
             dispose: (context, eventBus) => eventBus.dispose(),
           )
         ],
-        child: CounterPage(),
+        child: Provider<CounterBloc>(
+          create: (context) => CounterBloc(),
+          child: CounterPage(),
+        ),
       ),
     );
   }

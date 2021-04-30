@@ -1,21 +1,33 @@
 import 'package:provider/provider.dart';
+
 import 'package:stream_app_poc/core/generic_bloc.dart';
+
 import 'counter_state.dart';
 
 class CounterBloc extends GenericBloc<CounterState> {
   late CounterState state;
-
-  init() {
-    state = CounterState(count: 0);
-  }
+  CounterBloc() : state = CounterInit();
 
   Future<void> increment() async {
-    state.count++;
+    //int newValue = state.count;
+    final int newValue = state.count + 1;
+    if (newValue == 5) {
+      print('>>>>>>> newValue $newValue');
+      state = CounterReached(newValue);
+    } else {
+      state = CounterIncremented(newValue);
+    }
     add(state);
   }
 
   void decrement() {
-    state.count--;
+    int newValue = state.count - 1;
+    if (newValue == 5) {
+      print('>>>>>>> newValue $newValue');
+      state = CounterReached(newValue);
+    } else {
+      state = CounterDecrement(newValue);
+    }
     add(state);
   }
 
@@ -23,7 +35,7 @@ class CounterBloc extends GenericBloc<CounterState> {
     addError(err);
   }
 
-  static get(context) {
+  static get<CounterBloc>(context) {
     Provider.of<CounterBloc>(context, listen: false);
   }
 }

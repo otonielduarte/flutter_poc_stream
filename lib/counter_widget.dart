@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stream_app_poc/core/event_bus.dart';
+import 'package:stream_app_poc/empty_screen.dart';
 
 class CountWidget extends StatelessWidget {
   @override
@@ -27,11 +28,7 @@ class CountWidget extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (_) => Scaffold(
-                    body: Container(
-                      child: Text('Nova pagina'),
-                    ),
-                  ),
+                  builder: (_) => EmptyScreen(),
                 ),
               );
             },

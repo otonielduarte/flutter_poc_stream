@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:stream_app_poc/core/event_bus.dart';
+import 'package:provider/provider.dart';
 
 import 'counter_bloc.dart';
 import 'counter_state.dart';
@@ -17,11 +18,16 @@ class CounterPage extends StatefulWidget {
 class _CounterPageState extends State<CounterPage> {
   late StreamSubscription<Event> subscription;
 
-  final _bloc = CounterBloc();
+  late CounterBloc _bloc;
+
+  @override
+  void didChangeDependencies() {
+    _bloc = context.read<CounterBloc>();
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
-    _bloc.init();
     subscription = EventBus.get(context).stream.listen((Event e) {
       if (e.event == 'increment') {
         _bloc.increment();
@@ -55,19 +61,26 @@ class _CounterPageState extends State<CounterPage> {
                         builder:
                             (context, AsyncSnapshot<CounterState> snapshot) {
                           if (!snapshot.hasData) return Container();
-                          return Container(
-                            alignment: AlignmentDirectional.topStart,
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle, color: Colors.orange),
-                            child: Text(
-                              '${snapshot.data!.count}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                          final state = snapshot.data;
+                          if (state is CounterIncremented ||
+                              state is CounterDecrement) {
+                            return Container(
+                              alignment: AlignmentDirectional.topStart,
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.orange),
+                              child: Text(
+                                '${snapshot.data!.count}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else if (state is CounterReached) {
+                            return Text('Is Reached');
+                          }
+                          return Container();
                         },
                       ),
                     ),

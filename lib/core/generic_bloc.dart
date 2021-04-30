@@ -2,11 +2,14 @@ import 'dart:async';
 
 abstract class GenericBloc<T> {
   final _controller = StreamController<T>.broadcast();
+  T? lastObject;
 
   get stream => _controller.stream;
 
   void add(T object) {
-    if (!_controller.isClosed) {
+    if (!_controller.isClosed && lastObject != object) {
+      print('${lastObject.runtimeType} - ${object.runtimeType}');
+      lastObject = object;
       _controller.add(object);
     }
   }
